@@ -2,7 +2,7 @@ package.path = package.path .. 'C:\\LuaProjects\\boardgame\\?.lua'
 
 _G.love = require('love')
 _G.sti = require('libraries/sti')
-_G.gameMap = sti('maps/boardMap.lua')
+_G.gameMap = sti('maps/blockymap.lua')
 _G.game = require('boardgame')
 _G.bot = require('bot')
 
