@@ -15,6 +15,7 @@ end
 
 function love.load()
   game.initBoard()
+  _G.sfx = love.audio.newSource('sounds/metronome.mp3', 'static')
   _G.blueTile = love.graphics.newImage('maps/Single Blocks/Blue.png')
   _G.lightTile = love.graphics.newImage('maps/Single Blocks/LightBlue.png')
   _G.board = game.board
@@ -47,6 +48,7 @@ function love.update(dt)
   if counter % 180 == 0 then
     game.isGameOver()
     bot.makeMoveAsBot()
+    love.audio.play(sfx)
   end
   -- game.printBoard()
 end
@@ -86,7 +88,7 @@ function love.draw()
               prevSquare.row = i
               oldSelection.col = tileX
               oldSelection.row = tileY
-              Selected = true           
+              Selected = true          
           end
           love.graphics.print('old square: ' .. prevSquare.col .. ',' .. prevSquare.row, 0, 60)
           love.graphics.print('new square: ' .. nextSquare.col .. ',' .. nextSquare.row, 0, 80)
