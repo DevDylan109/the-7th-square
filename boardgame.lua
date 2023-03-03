@@ -158,32 +158,32 @@ end
 
 function M.validateMove(prevSquare, nextSquare, currentPlayer)
   if M.isOutOfBounds(nextSquare) then
-    print('Square is out of bounds')
+    -- print('Square is out of bounds')
     return false
   end
 
   if isOccupied(nextSquare) then
-    print('Square is occupied')
+    -- print('Square is occupied')
     return false
   end
 
   if not isOccupied(prevSquare) then
-    print('can not make move from empty square')
+    -- print('can not make move from empty square')
     return false
   end
 
   if isFromEnemy(prevSquare, currentPlayer) then
-    print('prev Square is from enemy')
+    -- print('prev Square is from enemy')
     return false
   end
 
   if not WithinRange(prevSquare, nextSquare, 2) then
-    print('the new Square is outside of allowed range')
+    -- print('the new Square is outside of allowed range')
     return false
   end
 
   if isRestrictedCoordinate(prevSquare, nextSquare) then
-    print('coordinate is restricted')
+    -- print('coordinate is restricted')
     return false
   end
 
@@ -263,19 +263,6 @@ local function infectEnemy(square, player)
 end
 
 
-function M.makeMove(prevSquare, nextSquare, player)
-  local isMoveValid = M.validateMove(prevSquare, nextSquare, player)
-
-  if isMoveValid then
-    if isMoveTwoSteps(prevSquare, nextSquare) then
-      jumpToCoord(prevSquare, nextSquare, player)
-    else
-      copyToCoord(prevSquare, nextSquare)
-    end
-    infectEnemy(nextSquare, player)
-  end
-end
-
 function M.getSquaresAroundSquare(playerSquare, range)
   local p = playerSquare
 
@@ -327,31 +314,31 @@ function M.getAllPlayerSquares(player)
   return playerSquares
 end
 
-local function isPlayerSurrounded(player)
-  local playerSquares = M.getAllPlayerSquares(player)
+-- local function isPlayerSurrounded(player)
+--   local playerSquares = M.getAllPlayerSquares(player)
 
-  local all = {}
-  for _, square in ipairs(playerSquares) do
-    local squareArray = M.getSquaresAroundSquare(square, 2) --concat all arrays
-    for _, value in ipairs(squareArray) do
-      table.insert(all, value)
-    end
-  end
+--   local all = {}
+--   for _, square in ipairs(playerSquares) do
+--     local squareArray = M.getSquaresAroundSquare(square, 2) --concat all arrays
+--     for _, value in ipairs(squareArray) do
+--       table.insert(all, value)
+--     end
+--   end
 
-  for i = #all, 1, -1 do
-    if M.isOutOfBounds(all[i]) then
-      table.remove(all, i)
-    end
-  end
+--   for i = #all, 1, -1 do
+--     if M.isOutOfBounds(all[i]) then
+--       table.remove(all, i)
+--     end
+--   end
 
-  for i, square in ipairs(all) do
-    if not isFromEnemy(square, player) then
-      return false
-    end
-  end
+--   for _, square in ipairs(all) do
+--     if not isFromEnemy(square, player) then
+--       return false
+--     end
+--   end
 
-  return true
-end
+--   return true
+-- end
 
 
 local function isBoardFull()
@@ -366,7 +353,60 @@ local function isBoardFull()
 end
 
 
-function M.isGameOver()
+local function isSurrounded(player)
+  local playerSquares = M.getAllPlayerSquares(player)
+  local squaresAround = {}
+
+  for _, v in ipairs(playerSquares) do
+    local arr = M.getSquaresAroundSquare(v, 2)
+    for _, v2 in ipairs(arr) do
+      table.insert(squaresAround, v2)
+    end
+  end
+
+  for i = #squaresAround, 1, -1 do
+    if M.isOutOfBounds(squaresAround[i]) then
+      table.remove(squaresAround, i)
+    end
+  end
+
+  for _, v in ipairs(playerSquares) do
+    for _, v2 in ipairs(squaresAround) do
+      if M.validateMove(v, v2, player) then
+        return false
+      end
+    end
+  end
+
+  print(player .. ' is surrounded')
+  return true
+end
+
+
+local function getEnemy(player)
+  if player == HUMAN().player then
+    return COMPUTER().player
+  else
+    return HUMAN().player
+  end
+end
+
+
+local function hasConquered(player)
+  local enemy = getEnemy(player)
+
+  for _, row in ipairs(board) do
+    for _, col in ipairs(row) do
+      if col.player == enemy then
+        return false
+      end
+    end
+  end
+  return true;
+end
+
+
+local function hasWinner()
   if isBoardFull() then
     local humanSquares = 0
     local computerSquares = 0
@@ -383,28 +423,46 @@ function M.isGameOver()
 
     if humanSquares > 24 then
       print('you won')
-      clearBoard()
       return true
     else
       print('computer won')
-      clearBoard()
       return true
     end
-  else
-    if isPlayerSurrounded(HUMAN().player) then
-      print('computer won')
-      clearBoard()
-      return true
-    elseif isPlayerSurrounded(COMPUTER().player) then
-      print('you won')
-      clearBoard()
-      return true
-    else
-      print('match is still in progress...')
-    end
+  end
+  return false
+end
+
+
+function M.isGameOver(player)
+  if hasConquered(player) then
+    print(player .. ' has conquered')
+    clearBoard()
+    return true
+  end
+
+  if isSurrounded(player) or hasWinner() then
+    clearBoard()
+    return true
   end
 
   return false
 end
 
-return M;
+function M.makeMove(prevSquare, nextSquare, player)
+  local isMoveValid = false;
+  local isGameOver = M.isGameOver(player)
+
+  if not isGameOver then
+    isMoveValid = M.validateMove(prevSquare, nextSquare, player)
+    if isMoveValid then
+      if isMoveTwoSteps(prevSquare, nextSquare) then
+        jumpToCoord(prevSquare, nextSquare, player)
+      else
+        copyToCoord(prevSquare, nextSquare)
+      end
+      infectEnemy(nextSquare, player)
+    end
+  end
+end
+
+return M

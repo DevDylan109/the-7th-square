@@ -46,7 +46,6 @@ function love.update(dt)
 
   counter = counter + 1
   if counter % 180 == 0 then
-    game.isGameOver()
     bot.makeMoveAsBot()
     love.audio.play(sfx)
   end

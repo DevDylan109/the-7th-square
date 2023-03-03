@@ -20,15 +20,13 @@ function Mod.initialize(gameInstance)
   board = gameInstance.board
 end
 
-
 function Mod.bla()
   print('bla')
 end
 
-
-local function manhattanDist(X1,Y1, X2, Y2)
-    local dist = math.abs(X2 - X1) + math.abs(Y2 - Y1)
-    return dist;
+local function manhattanDist(X1, Y1, X2, Y2)
+  local dist = math.abs(X2 - X1) + math.abs(Y2 - Y1)
+  return dist;
 end
 
 
@@ -38,26 +36,6 @@ local function removeOutliers(array)
       table.remove(array, i)
     end
   end
-end
-
-
-local function calculateShortestDistance()
-  local allBotSquares = game.getAllPlayerSquares(COMPUTER().player)
-  local allHumanSquares = game.getAllPlayerSquares(HUMAN().player)
-  local shortestDistance = 999
-  local bestBotSquare = nil
-
-  for i, v in ipairs(allBotSquares) do
-    for j, val in ipairs(allHumanSquares) do
-      local dist = manhattanDist(v.col, v.row, val.col, val.row)
-      if dist < shortestDistance then
-        shortestDistance = dist
-        bestBotSquare = v
-      end
-    end
-  end
-
-  return bestBotSquare
 end
 
 
@@ -74,6 +52,29 @@ local function getSquaresAroundBot(square)
 end
 
 
+local function calculateShortestDistance()
+  local allBotSquares = game.getAllPlayerSquares(COMPUTER().player)
+  local allHumanSquares = game.getAllPlayerSquares(HUMAN().player)
+  local shortestDistance = 999
+  local bestBotSquare = nil
+  local dist = 0;
+
+  for i, v in ipairs(allBotSquares) do
+    for j, val in ipairs(allHumanSquares) do
+      dist = manhattanDist(v.col, v.row, val.col, val.row)
+      if dist < shortestDistance then
+        if #getSquaresAroundBot(v) > 0 then
+          shortestDistance = dist
+          bestBotSquare = v
+        end
+      end
+    end
+  end
+
+  return bestBotSquare
+end
+
+
 local function getRandomSquare(squareArray)
   local randomIndex = math.random(1, #squareArray)
   local randomSquare = squareArray[randomIndex]
@@ -82,12 +83,13 @@ end
 
 
 function Mod.makeMoveAsBot()
-  local moveFrom = calculateShortestDistance()
-  local validSquares = getSquaresAroundBot(moveFrom)
-  local moveTo = getRandomSquare(validSquares)
-  print('move from: ' ..moveFrom.row ..','..moveFrom.col.. '   moveTo: ' ..moveTo.row ..','..moveTo.col)
-  game.makeMove(moveFrom, moveTo, COMPUTER().player)
+  local gameOver = game.isGameOver(COMPUTER().player)
+  if not gameOver then
+    local moveFrom = calculateShortestDistance()
+    local validSquares = getSquaresAroundBot(moveFrom)
+    local moveTo = getRandomSquare(validSquares)
+    game.makeMove(moveFrom, moveTo, COMPUTER().player)
+  end
 end
-
 
 return Mod
