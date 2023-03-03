@@ -434,13 +434,18 @@ end
 
 
 function M.isGameOver(player)
+  if hasWinner() then
+    clearBoard()
+    return true
+  end
+
   if hasConquered(player) then
     print(player .. ' has conquered')
     clearBoard()
     return true
   end
 
-  if isSurrounded(player) or hasWinner() then
+  if isSurrounded(player) then
     clearBoard()
     return true
   end
