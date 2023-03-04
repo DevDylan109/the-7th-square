@@ -52,9 +52,16 @@ function love.load()
       love.window.close()
     end
   )
+
+  _G.highscoreBtn = button('Highscores',
+  function ()
+    print('Show highscores')
+  end
+  )
   buttons[1] = playBtn
   buttons[2] = optionsBtn
   buttons[3] = exitBtn
+  buttons[4] = highscoreBtn
 
   _G.ww = love.graphics.getWidth()
   _G.wh = love.graphics.getHeight()
