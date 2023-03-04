@@ -314,32 +314,6 @@ function M.getAllPlayerSquares(player)
   return playerSquares
 end
 
--- local function isPlayerSurrounded(player)
---   local playerSquares = M.getAllPlayerSquares(player)
-
---   local all = {}
---   for _, square in ipairs(playerSquares) do
---     local squareArray = M.getSquaresAroundSquare(square, 2) --concat all arrays
---     for _, value in ipairs(squareArray) do
---       table.insert(all, value)
---     end
---   end
-
---   for i = #all, 1, -1 do
---     if M.isOutOfBounds(all[i]) then
---       table.remove(all, i)
---     end
---   end
-
---   for _, square in ipairs(all) do
---     if not isFromEnemy(square, player) then
---       return false
---     end
---   end
-
---   return true
--- end
-
 
 local function isBoardFull()
   for _, row in ipairs(M.board) do
