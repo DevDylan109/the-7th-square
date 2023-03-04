@@ -91,6 +91,10 @@ end
 function love.update(dt)
   _G.mouse_x, _G.mouse_y = love.mouse.getPosition()
 
+  if love.keyboard.isDown("escape") then
+    menuClosed = false
+  end
+
   if menuClosed then
     if mouse_x >= 192 and mouse_x <= 192 + 576 and mouse_y >= 64 and mouse_y <= 64 + 576 then
       DebugMsg = 'cursor is within board'
