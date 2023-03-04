@@ -263,7 +263,7 @@ local function infectEnemy(square, player)
 end
 
 
-function M.getSquaresAroundSquare(playerSquare, range)
+function M.getSquaresAroundSquare(playerSquare, radius)
   local p = playerSquare
 
   local array = {}
@@ -271,8 +271,8 @@ function M.getSquaresAroundSquare(playerSquare, range)
     array[i] = square:new();
   end
 
-  --get all squares around player's Square within a range of 2 squares
-  for i = 1, range do
+  --get all squares around player's Square within a radius of 2 squares
+  for i = 1, radius do
     local x = 0
     if i == 2 then
       x = 8
@@ -355,24 +355,16 @@ end
 
 local function isSurrounded(player)
   local playerSquares = M.getAllPlayerSquares(player)
-  local squaresAround = {}
 
   for _, v in ipairs(playerSquares) do
     local arr = M.getSquaresAroundSquare(v, 2)
-    for _, v2 in ipairs(arr) do
-      table.insert(squaresAround, v2)
+    for i = #arr, 1, -1 do
+      if M.isOutOfBounds(arr[i]) then
+        arr[i] = nil
+      end
     end
-  end
-
-  for i = #squaresAround, 1, -1 do
-    if M.isOutOfBounds(squaresAround[i]) then
-      table.remove(squaresAround, i)
-    end
-  end
-
-  for _, v in ipairs(playerSquares) do
-    for _, v2 in ipairs(squaresAround) do
-      if M.validateMove(v, v2, player) then
+    for _, v3 in pairs(arr) do
+      if M.validateMove(v, v3, player) then
         return false
       end
     end
@@ -434,29 +426,32 @@ end
 
 
 function M.isGameOver(player)
+  local ret = false
   if hasWinner() then
     clearBoard()
-    return true
+    ret = true
   end
 
   if hasConquered(player) then
     print(player .. ' has conquered')
     clearBoard()
-    return true
+    ret = true
   end
 
   if isSurrounded(player) then
     clearBoard()
-    return true
+    ret = true
   end
 
-  return false
+  return ret
 end
 
 function M.makeMove(prevSquare, nextSquare, player)
   local isMoveValid = false;
+  local x = os.clock()
   local isGameOver = M.isGameOver(player)
-
+  print(string.format("elapsed time: %.4f\n", os.clock() - x))
+  --local isGameOver = false;
   if not isGameOver then
     isMoveValid = M.validateMove(prevSquare, nextSquare, player)
     if isMoveValid then

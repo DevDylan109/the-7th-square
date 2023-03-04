@@ -29,7 +29,7 @@ local function manhattanDist(X1, Y1, X2, Y2)
   return dist;
 end
 
-
+--table.remove is volgensmij erg langzaam. Vooral bij grote arrays.
 local function removeOutliers(array)
   for i = #array, 1, -1 do
     if game.isOutOfBounds(array[i]) then
@@ -84,6 +84,7 @@ end
 
 function Mod.makeMoveAsBot()
   local gameOver = game.isGameOver(COMPUTER().player)
+  --local gameOver = false
   if not gameOver then
     local moveFrom = calculateShortestDistance()
     local validSquares = getSquaresAroundBot(moveFrom)
