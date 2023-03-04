@@ -69,6 +69,8 @@ function love.load()
   _G.button_height = 60
 
   _G.sfx = love.audio.newSource('sounds/metronome.mp3', 'static')
+  _G.btnSfx = love.audio.newSource('sounds/hitButton.mp3', 'static')
+  _G.menuBgm = love.audio.newSource('sounds/menuMusic.mp3', 'stream')
   _G.blueTile = love.graphics.newImage('maps/Single Blocks/Blue.png')
   _G.lightTile = love.graphics.newImage('maps/Single Blocks/LightBlue.png')
   _G.board = game.board
@@ -92,10 +94,12 @@ function love.update(dt)
   _G.mouse_x, _G.mouse_y = love.mouse.getPosition()
 
   if love.keyboard.isDown("escape") then
+    love.audio.play(btnSfx)
     menuClosed = false
   end
 
   if menuClosed then
+    love.audio.stop(menuBgm)
     if mouse_x >= 192 and mouse_x <= 192 + 576 and mouse_y >= 64 and mouse_y <= 64 + 576 then
       DebugMsg = 'cursor is within board'
     else
@@ -108,6 +112,10 @@ function love.update(dt)
       love.audio.play(sfx)
     end
     --game.printBoard()
+  end
+
+  if not menuClosed then
+    love.audio.play(menuBgm)
   end
 end
 
@@ -137,6 +145,7 @@ function love.draw()
       btn.now = love.mouse.isDown(1)
       if btn.now and not btn.last and hovered then
         btn.fn()
+        love.audio.play(btnSfx)
       end
 
       love.graphics.setColor(unpack(color))
