@@ -21,11 +21,11 @@ You can either:
 
 ## Mechanics
 
-When your tile touches an enemy tile, you conquer that enemy tile — and vice versa.
+When your tile touches an enemy tile, you conquer that enemy tile and vice versa.
 
 ---
 
 ## Screenshots
 
-![menu](/Screenshot_2025-07-23_152128.png)  
-![gameplay](/Screenshot_2025-07-23_152205.png)
+![menu](gameplay-photo.png)  
+![gameplay](menu-photo.png)
