@@ -16,7 +16,8 @@ Your goal is to conquer the most tiles.
 You can either:  
 - **Expand a tile** by selecting a blue tile first, then selecting a neighbouring empty tile.  
 - **Jump a tile** by selecting a blue tile first, then selecting an empty tile that’s two spaces away from it.
-
+  
+![menu](game.gif) 
 ---
 
 ## Mechanics
@@ -26,6 +27,5 @@ When your tile touches an enemy tile, you conquer that enemy tile and vice versa
 ---
 
 ## Screenshots
-
-![menu](gameplay-photo.png)  
-![gameplay](menu-photo.png)
+![game-menu](menu-photo.png)
+![gameplay](gameplay-photo.png)
